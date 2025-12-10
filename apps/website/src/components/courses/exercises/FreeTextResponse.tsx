@@ -29,10 +29,14 @@ const FreeTextResponse: React.FC<FreeTextResponseProps> = ({
 }) => {
   const router = useRouter();
   const [answer, setAnswer] = useState<string>(exerciseResponse || '');
+  const lastSyncedExerciseResponse = React.useRef(exerciseResponse);
 
   useEffect(() => {
-    setAnswer(exerciseResponse || '');
-  }, [exerciseResponse]);
+    if (answer === '' && lastSyncedExerciseResponse.current !== exerciseResponse) {
+      setAnswer(exerciseResponse || '');
+    }
+    lastSyncedExerciseResponse.current = exerciseResponse;
+  }, [exerciseResponse, answer]);
 
   const handleSave = useCallback(async (value: string) => {
     await onExerciseSubmit(value, value.trim().length > 0);
